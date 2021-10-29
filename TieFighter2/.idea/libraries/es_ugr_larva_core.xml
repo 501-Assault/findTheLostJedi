@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="es.ugr.larva.core">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../es.ugr.larva.core/out/artifacts/es_ugr_larva_core_jar/es.ugr.larva.core.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
