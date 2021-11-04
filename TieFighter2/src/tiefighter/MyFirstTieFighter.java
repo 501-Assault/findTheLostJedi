@@ -86,7 +86,7 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
 
     public Status MyCheckin() {
         Info("Loading passport and checking-in to LARVA");
-        if (!loadMyPassport("../mypassport.passport")) {
+        if (!loadMyPassport("passport/MyPassport.passport")) {
             Error("Unable to load passport file");
             return Status.EXIT;
         }

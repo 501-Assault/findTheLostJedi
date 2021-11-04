@@ -1,95 +1,35 @@
-{"date":"2021-10-29 18:43:15:731","record":{"agent":"CLONE501","info":"Setup and configure agent"}}
-{"date":"2021-10-29 18:43:16:711","record":{"agent":"CLONE501","info":"Status: CHECKIN"}}
-{"date":"2021-10-29 18:43:18:822","record":{"agent":"CLONE501","info":"Loading passport and checking-in to LARVA"}}
-{"date":"2021-10-29 18:43:18:834","record":{"agent":"CLONE501","info":"Checking-in to LARVA"}}
-{"date":"2021-10-29 18:43:19:001","record":{"agent":"CLONE501","info":"Found agent I.M. Mace Windu as Identity Manager"}}
-{"date":"2021-10-29 18:43:19:003","record":{"agent":"CLONE501","info":"Sending passport to I.M. Mace Windu"}}
-{"date":"2021-10-29 18:43:19:015","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|I.M. Mace Windu ||CNT|066000211230236191174245157253129231186067026186170066056219169233067030136167169067058151242067016067052066046066007067046066039141165219208211220251138066032202227067008066060236066036172193066058066045161067047239208066024251176066004066022067048225067032066007066060170175067052142066044174066018169213204067010067046067042067062213255250067003067031140141066062066014066015067056133067054067049150067050066036066004142066019195067003128066016180066005150067032194067026130247066020067014204239066011067019132199066032221212244182067033218067057209066036067010206066011224067003066046066003066021188066013198066060067057067017162200067058185067031210066019066008066025066029066041066005066013181066009066027067007066052161066063066006162147066003168067027134184067003067061159225202174170066028250067055067026137183207129067015194219181066044232067053158066043066014220066034190186191066061066006066043189066063066014067003215184232067000163066040131245066018243067006170067036067010211066031066021218066020212220067002128232210204067055173067050066040066050140||"}}
-{"date":"2021-10-29 18:43:19:151","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|I.M. Mace Windu||RCV|CLONE501 ||CNT|Confirm check-in from agent CLONE501 in representation of user 41096 GARCIA VERJAGA, RAMON||"}}
-{"date":"2021-10-29 18:43:19:154","record":{"agent":"CLONE501","info":"Confirm check-in from agent CLONE501 in representation of user 41096 GARCIA VERJAGA, RAMON"}}
-{"date":"2021-10-29 18:43:19:157","record":{"agent":"CLONE501","info":"Status: OPENPROBLEM"}}
-{"date":"2021-10-29 18:43:23:194","record":{"agent":"CLONE501","info":"Found problem manager P.M. Mando"}}
-{"date":"2021-10-29 18:43:23:196","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|P.M. Mando ||CNT|Request open Abafar||"}}
-{"date":"2021-10-29 18:43:23:202","record":{"agent":"CLONE501","info":"Request opening problem Abafar to P.M. Mando"}}
-{"date":"2021-10-29 18:43:23:332","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|P.M. Mando||RCV|CLONE501 ||CNT|Agree to open session SESSION::dJiOBU4p in problem Abafar for agent CLONE501 in representation of user GARCIA VERJAGA, RAMON||"}}
-{"date":"2021-10-29 18:43:23:334","record":{"agent":"CLONE501","info":"P.M. Mando says: Agree to open session SESSION::dJiOBU4p in problem Abafar for agent CLONE501 in representation of user GARCIA VERJAGA, RAMON"}}
-{"date":"2021-10-29 18:43:23:784","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|S.M. Neom||RCV|CLONE501 ||CNT|Hello, my name is S.M. Neom and I am going to guide you thru problem Abafar please keep the session ID:\n`SESSION::dJiOBU4p`\nat hand.||"}}
-{"date":"2021-10-29 18:43:23:787","record":{"agent":"CLONE501","info":"S.M. Neom says: Hello, my name is S.M. Neom and I am going to guide you thru problem Abafar please keep the session ID:\n`SESSION::dJiOBU4p`\nat hand."}}
-{"date":"2021-10-29 18:43:23:788","record":{"agent":"CLONE501","info":"Status: COMISSIONING"}}
-{"date":"2021-10-29 18:43:25:800","record":{"agent":"CLONE501","info":"Found store manager STORE Nojmal"}}
-{"date":"2021-10-29 18:43:25:803","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|STORE Nojmal ||CNT|Request product GPS session SESSION::dJiOBU4p||"}}
-{"date":"2021-10-29 18:43:25:871","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|STORE Nojmal||RCV|CLONE501 ||CNT|Confirm : GPS::U0VTU0lPTjo6ZEppT0JVNHAgR1BT||"}}
-{"date":"2021-10-29 18:43:25:874","record":{"agent":"CLONE501","info":"Bought sensor GPS"}}
-{"date":"2021-10-29 18:43:25:877","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|STORE Nojmal ||CNT|Request product DISTANCE session SESSION::dJiOBU4p||"}}
-{"date":"2021-10-29 18:43:25:935","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|STORE Nojmal||RCV|CLONE501 ||CNT|Confirm : DISTANCE::U0VTU0lPTjo6ZEppT0JVNHAgRElTVEFOQ0U=||"}}
-{"date":"2021-10-29 18:43:25:937","record":{"agent":"CLONE501","info":"Bought sensor DISTANCE"}}
-{"date":"2021-10-29 18:43:25:940","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|STORE Nojmal ||CNT|Request product ANGULAR session SESSION::dJiOBU4p||"}}
-{"date":"2021-10-29 18:43:26:003","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|STORE Nojmal||RCV|CLONE501 ||CNT|Confirm : ANGULAR::U0VTU0lPTjo6ZEppT0JVNHAgQU5HVUxBUg==||"}}
-{"date":"2021-10-29 18:43:26:005","record":{"agent":"CLONE501","info":"Bought sensor ANGULAR"}}
-{"date":"2021-10-29 18:43:26:006","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|STORE Nojmal ||CNT|Request product LIDARHQ session SESSION::dJiOBU4p||"}}
-{"date":"2021-10-29 18:43:26:071","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|STORE Nojmal||RCV|CLONE501 ||CNT|Confirm : LIDARHQ::U0VTU0lPTjo6ZEppT0JVNHAgTElEQVJIUQ==||"}}
-{"date":"2021-10-29 18:43:26:072","record":{"agent":"CLONE501","info":"Bought sensor LIDARHQ"}}
-{"date":"2021-10-29 18:43:26:075","record":{"agent":"CLONE501","info":"Bought all sensor keys GPS::U0VTU0lPTjo6ZEppT0JVNHAgR1BT DISTANCE::U0VTU0lPTjo6ZEppT0JVNHAgRElTVEFOQ0U= ANGULAR::U0VTU0lPTjo6ZEppT0JVNHAgQU5HVUxBUg== LIDARHQ::U0VTU0lPTjo6ZEppT0JVNHAgTElEQVJIUQ== "}}
-{"date":"2021-10-29 18:43:26:076","record":{"agent":"CLONE501","info":"Status: JOINSESSION"}}
-{"date":"2021-10-29 18:43:27:871","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|S.M. Neom ||CNT|Request join session SESSION::dJiOBU4p attach sensors GPS::U0VTU0lPTjo6ZEppT0JVNHAgR1BT DISTANCE::U0VTU0lPTjo6ZEppT0JVNHAgRElTVEFOQ0U= ANGULAR::U0VTU0lPTjo6ZEppT0JVNHAgQU5HVUxBUg== LIDARHQ::U0VTU0lPTjo6ZEppT0JVNHAgTElEQVJIUQ== ||"}}
-{"date":"2021-10-29 18:43:30:189","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|S.M. Neom||RCV|CLONE501 ||CNT|Confirm : join session SESSION::dJiOBU4p in world Abafar 25 x 25 maximum flight level 256 with capabilities [MOVE, RIGHT, LEFT, UP, DOWN, CAPTURE, RECHARGE, STATUS, TRACE, PAYLOAD, CARGO, ENERGYBURNT, NUMSTEPS, NAME, GPS, DISTANCE, ANGULAR, LIDARHQ]||"}}
-{"date":"2021-10-29 18:43:30:191","record":{"agent":"CLONE501","info":"Status: SOLVEPROBLEM"}}
-{"date":"2021-10-29 18:43:34:285","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|S.M. Neom ||CNT|Query sensors session SESSION::dJiOBU4p||"}}
-{"date":"2021-10-29 18:43:34:500","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|S.M. Neom||RCV|CLONE501 ||CNT|{\"perceptions\":[{\"sensor\":\"gps\",\"data\":[[12,12,60]]},{\"sensor\":\"payload\",\"data\":[0]},{\"sensor\":\"distance\",\"data\":[16.97056274847714]},{\"sensor\":\"angular\",\"data\":[-45]},{\"sensor\":\"lidarhq\",\"data\":[[-2147483648,-2147483648,-2147483648,-2147483648,-214748364...||"}}
-{"date":"2021-10-29 18:43:34:504","record":{"agent":"CLONE501","info":"Agent orientation= 0º"}}
-{"date":"2021-10-29 18:43:34:516","record":{"agent":"CLONE501","info":"Reading of GPS\nX=12.0 Y=12.0 Z=60.0"}}
-{"date":"2021-10-29 18:43:34:518","record":{"agent":"CLONE501","info":"Reading of angular= 135.0º"}}
-{"date":"2021-10-29 18:43:34:519","record":{"agent":"CLONE501","info":"Reading of distance= 16.0m"}}
-{"date":"2021-10-29 18:43:34:529","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|S.M. Neom ||CNT|Request execute LEFT session SESSION::dJiOBU4p||"}}
-{"date":"2021-10-29 18:43:35:718","record":{"agent":"CLONE501","info":"Action LEFT executed successfully"}}
-{"date":"2021-10-29 18:43:35:719","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|S.M. Neom ||CNT|Query sensors session SESSION::dJiOBU4p||"}}
-{"date":"2021-10-29 18:43:39:045","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|S.M. Neom||RCV|CLONE501 ||CNT|{\"perceptions\":[{\"sensor\":\"gps\",\"data\":[[12,12,60]]},{\"sensor\":\"payload\",\"data\":[0]},{\"sensor\":\"distance\",\"data\":[16.97056274847714]},{\"sensor\":\"angular\",\"data\":[-45]},{\"sensor\":\"lidarhq\",\"data\":[[-2147483648,-2147483648,-2147483648,-2147483648,-214748364...||"}}
-{"date":"2021-10-29 18:43:39:047","record":{"agent":"CLONE501","info":"Agent orientation= 45º"}}
-{"date":"2021-10-29 18:43:39:048","record":{"agent":"CLONE501","info":"Reading of GPS\nX=12.0 Y=12.0 Z=60.0"}}
-{"date":"2021-10-29 18:43:39:049","record":{"agent":"CLONE501","info":"Reading of angular= 135.0º"}}
-{"date":"2021-10-29 18:43:39:049","record":{"agent":"CLONE501","info":"Reading of distance= 16.0m"}}
-{"date":"2021-10-29 18:43:39:053","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|S.M. Neom ||CNT|Request execute LEFT session SESSION::dJiOBU4p||"}}
-{"date":"2021-10-29 18:43:39:136","record":{"agent":"CLONE501","info":"Action LEFT executed successfully"}}
-{"date":"2021-10-29 18:43:39:147","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|S.M. Neom ||CNT|Query sensors session SESSION::dJiOBU4p||"}}
-{"date":"2021-10-29 18:43:39:244","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|S.M. Neom||RCV|CLONE501 ||CNT|{\"perceptions\":[{\"sensor\":\"gps\",\"data\":[[12,12,60]]},{\"sensor\":\"payload\",\"data\":[0]},{\"sensor\":\"distance\",\"data\":[16.97056274847714]},{\"sensor\":\"angular\",\"data\":[-45]},{\"sensor\":\"lidarhq\",\"data\":[[0,-25,-45,-60,-60,-60,-50,-45,-45,-40,-40,-15,5,30,50,60,6...||"}}
-{"date":"2021-10-29 18:43:39:245","record":{"agent":"CLONE501","info":"Agent orientation= 90º"}}
-{"date":"2021-10-29 18:43:39:246","record":{"agent":"CLONE501","info":"Reading of GPS\nX=12.0 Y=12.0 Z=60.0"}}
-{"date":"2021-10-29 18:43:39:247","record":{"agent":"CLONE501","info":"Reading of angular= 135.0º"}}
-{"date":"2021-10-29 18:43:39:248","record":{"agent":"CLONE501","info":"Reading of distance= 16.0m"}}
-{"date":"2021-10-29 18:43:39:255","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|S.M. Neom ||CNT|Request execute LEFT session SESSION::dJiOBU4p||"}}
-{"date":"2021-10-29 18:43:39:346","record":{"agent":"CLONE501","info":"Action LEFT executed successfully"}}
-{"date":"2021-10-29 18:43:39:347","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|S.M. Neom ||CNT|Query sensors session SESSION::dJiOBU4p||"}}
-{"date":"2021-10-29 18:43:39:499","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|S.M. Neom||RCV|CLONE501 ||CNT|{\"perceptions\":[{\"sensor\":\"gps\",\"data\":[[12,12,60]]},{\"sensor\":\"payload\",\"data\":[0]},{\"sensor\":\"distance\",\"data\":[16.97056274847714]},{\"sensor\":\"angular\",\"data\":[-45]},{\"sensor\":\"lidarhq\",\"data\":[[0,-25,-45,-60,-60,-60,-50,-45,-45,-40,-40,-2147483648,-214...||"}}
-{"date":"2021-10-29 18:43:39:503","record":{"agent":"CLONE501","info":"Agent orientation= 135º"}}
-{"date":"2021-10-29 18:43:39:504","record":{"agent":"CLONE501","info":"Reading of GPS\nX=12.0 Y=12.0 Z=60.0"}}
-{"date":"2021-10-29 18:43:39:505","record":{"agent":"CLONE501","info":"Reading of angular= 135.0º"}}
-{"date":"2021-10-29 18:43:39:506","record":{"agent":"CLONE501","info":"Reading of distance= 16.0m"}}
-{"date":"2021-10-29 18:43:39:509","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|S.M. Neom ||CNT|Request execute MOVE session SESSION::dJiOBU4p||"}}
-{"date":"2021-10-29 18:43:40:088","record":{"agent":"CLONE501","info":"Action MOVE executed successfully"}}
-{"date":"2021-10-29 18:43:40:089","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|S.M. Neom ||CNT|Query sensors session SESSION::dJiOBU4p||"}}
-{"date":"2021-10-29 18:43:40:196","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|S.M. Neom||RCV|CLONE501 ||CNT|{\"perceptions\":[{\"sensor\":\"gps\",\"data\":[[11,11,60]]},{\"sensor\":\"payload\",\"data\":[0]},{\"sensor\":\"distance\",\"data\":[15.556349186104045]},{\"sensor\":\"angular\",\"data\":[-45]},{\"sensor\":\"lidarhq\",\"data\":[[20,-20,-45,-45,-55,-45,-30,-35,-30,-35,-30,-2147483648,-2...||"}}
-{"date":"2021-10-29 18:43:40:198","record":{"agent":"CLONE501","info":"Agent orientation= 135º"}}
-{"date":"2021-10-29 18:43:40:198","record":{"agent":"CLONE501","info":"Reading of GPS\nX=11.0 Y=11.0 Z=60.0"}}
-{"date":"2021-10-29 18:43:40:199","record":{"agent":"CLONE501","info":"Reading of angular= 135.0º"}}
-{"date":"2021-10-29 18:43:40:200","record":{"agent":"CLONE501","info":"Reading of distance= 15.0m"}}
-{"date":"2021-10-29 18:43:40:203","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|S.M. Neom ||CNT|Request execute MOVE session SESSION::dJiOBU4p||"}}
-{"date":"2021-10-29 18:43:40:287","record":{"agent":"CLONE501","info":"Action MOVE executed successfully"}}
-{"date":"2021-10-29 18:43:40:288","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|S.M. Neom ||CNT|Query sensors session SESSION::dJiOBU4p||"}}
-{"date":"2021-10-29 18:43:40:401","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|S.M. Neom||RCV|CLONE501 ||CNT|{\"perceptions\":[{\"sensor\":\"gps\",\"data\":[[10,10,60]]},{\"sensor\":\"payload\",\"data\":[0]},{\"sensor\":\"distance\",\"data\":[14.142135623730951]},{\"sensor\":\"angular\",\"data\":[-45.00000000000001]},{\"sensor\":\"lidarhq\",\"data\":[[-10,-20,-30,-35,-50,-50,-35,-30,-20,-15,-2...||"}}
-{"date":"2021-10-29 18:43:40:403","record":{"agent":"CLONE501","info":"Agent orientation= 135º"}}
-{"date":"2021-10-29 18:43:40:403","record":{"agent":"CLONE501","info":"Reading of GPS\nX=10.0 Y=10.0 Z=60.0"}}
-{"date":"2021-10-29 18:43:40:404","record":{"agent":"CLONE501","info":"Reading of angular= 135.0º"}}
-{"date":"2021-10-29 18:43:40:405","record":{"agent":"CLONE501","info":"Reading of distance= 14.0m"}}
-{"date":"2021-10-29 18:43:40:409","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|S.M. Neom ||CNT|Request execute MOVE session SESSION::dJiOBU4p||"}}
-{"date":"2021-10-29 18:43:40:475","record":{"agent":"CLONE501","info":"Status: CLOSEPROBLEM"}}
-{"date":"2021-10-29 18:44:04:878","record":{"agent":"CLONE501","info":"Closing problem Helloworld, session SESSION::dJiOBU4p"}}
-{"date":"2021-10-29 18:44:04:879","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|P.M. Mando ||CNT|Cancel session SESSION::dJiOBU4p||"}}
-{"date":"2021-10-29 18:44:04:974","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|P.M. Mando||RCV|CLONE501 ||CNT|Inform session SESSION::dJiOBU4p has been closed for agent CLONE501 in problem Abafar||"}}
-{"date":"2021-10-29 18:44:04:980","record":{"agent":"CLONE501","info":"P.M. Mando says: Inform session SESSION::dJiOBU4p has been closed for agent CLONE501 in problem Abafar"}}
-{"date":"2021-10-29 18:44:04:980","record":{"agent":"CLONE501","info":"Status: CHECKOUT"}}
-{"date":"2021-10-29 18:44:10:384","record":{"agent":"CLONE501","info":"Checking-out from LARVA"}}
-{"date":"2021-10-29 18:44:10:385","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|I.M. Mace Windu ||CNT|Request checkout||"}}
-{"date":"2021-10-29 18:44:10:595","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|I.M. Mace Windu||RCV|CLONE501 ||CNT|Confirm check-out of agent CLONE501||"}}
-{"date":"2021-10-29 18:44:10:610","record":{"agent":"CLONE501","info":"Confirm check-out of agent CLONE501"}}
-{"date":"2021-10-29 18:44:10:613","record":{"agent":"CLONE501","info":"Status: EXIT"}}
-{"date":"2021-10-29 18:44:11:541","record":{"agent":"CLONE501","info":"Taking down and deleting agent"}}
+{"date":"2021-11-04 22:03:35:590","record":{"agent":"CLONE501","info":"Setup and configure agent"}}
+{"date":"2021-11-04 22:03:36:057","record":{"agent":"CLONE501","info":"Status: CHECKIN"}}
+{"date":"2021-11-04 22:03:48:111","record":{"agent":"CLONE501","info":"Loading passport and checking-in to LARVA"}}
+{"date":"2021-11-04 22:03:48:117","record":{"agent":"CLONE501","info":"Checking-in to LARVA"}}
+{"date":"2021-11-04 22:03:48:199","record":{"agent":"CLONE501","info":"Found agent I.M. Obi-Wan as Identity Manager"}}
+{"date":"2021-11-04 22:03:48:200","record":{"agent":"CLONE501","info":"Sending passport to I.M. Obi-Wan"}}
+{"date":"2021-11-04 22:03:48:207","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|I.M. Obi-Wan ||CNT|066000211230236191174245157253129231186067026186170066056219169233067030136167169067058151242067016067052066046066007067046066039141165219208211220251138066032202227067008066060236066036172193066058066045161067047239208066024251176066004066022067048225067032066007066060170175067052142066044174066018169213204067010067046067042067062213255250067003067031140141066062066014066015067056133067054067049150067050066036066004142066019195067003128066016180066005150067032194067026130247066020067014204239066011067019132199066032221212244182067033218067057209066036067010206066011224067003066046066003066021188066013198066060067057067017162200067058185067031210066019066008066025066029066041066005066013181066009066027067007066052161066063066006162147066003168067027134184067003067061159225202174170066028250067055067026137183207129067015194219181066044232067053158066043066014220066034190186191066061066006066043189066063066014067003215184232067000163066040131245066018243067006170067036067010211066031066021218066020212220067002128232210204067055173067050066040066050140||"}}
+{"date":"2021-11-04 22:03:48:318","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|I.M. Obi-Wan||RCV|CLONE501 ||CNT|Confirm check-in from agent CLONE501 in representation of user 41096 GARCIA VERJAGA, RAMON||"}}
+{"date":"2021-11-04 22:03:48:320","record":{"agent":"CLONE501","info":"Confirm check-in from agent CLONE501 in representation of user 41096 GARCIA VERJAGA, RAMON"}}
+{"date":"2021-11-04 22:03:48:322","record":{"agent":"CLONE501","info":"Status: OPENPROBLEM"}}
+{"date":"2021-11-04 22:03:50:091","record":{"agent":"CLONE501","info":"Found problem manager P.M. Mando"}}
+{"date":"2021-11-04 22:03:50:093","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|P.M. Mando ||CNT|Request open Abafar||"}}
+{"date":"2021-11-04 22:03:50:096","record":{"agent":"CLONE501","info":"Request opening problem Abafar to P.M. Mando"}}
+{"date":"2021-11-04 22:03:50:232","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|P.M. Mando||RCV|CLONE501 ||CNT|Agree to open session SESSION::orwO1EEa in problem Abafar for agent CLONE501 in representation of user GARCIA VERJAGA, RAMON||"}}
+{"date":"2021-11-04 22:03:50:233","record":{"agent":"CLONE501","info":"P.M. Mando says: Agree to open session SESSION::orwO1EEa in problem Abafar for agent CLONE501 in representation of user GARCIA VERJAGA, RAMON"}}
+{"date":"2021-11-04 22:03:50:706","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|S.M. Nol||RCV|CLONE501 ||CNT|Hello, my name is S.M. Nol and I am going to guide you thru problem Abafar please keep the session ID:\n`SESSION::orwO1EEa`\nat hand.||"}}
+{"date":"2021-11-04 22:03:50:708","record":{"agent":"CLONE501","info":"S.M. Nol says: Hello, my name is S.M. Nol and I am going to guide you thru problem Abafar please keep the session ID:\n`SESSION::orwO1EEa`\nat hand."}}
+{"date":"2021-11-04 22:03:50:708","record":{"agent":"CLONE501","info":"Status: COMISSIONING"}}
+{"date":"2021-11-04 22:03:52:882","record":{"agent":"CLONE501","info":"Found store manager STORE Widuj"}}
+{"date":"2021-11-04 22:03:52:883","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|STORE Widuj ||CNT|Request product GPS session SESSION::orwO1EEa||"}}
+{"date":"2021-11-04 22:03:52:917","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|STORE Widuj||RCV|CLONE501 ||CNT|Confirm : GPS::U0VTU0lPTjo6b3J3TzFFRWEgR1BT||"}}
+{"date":"2021-11-04 22:03:52:919","record":{"agent":"CLONE501","info":"Bought sensor GPS"}}
+{"date":"2021-11-04 22:03:52:920","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|STORE Widuj ||CNT|Request product DISTANCE session SESSION::orwO1EEa||"}}
+{"date":"2021-11-04 22:03:52:955","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|STORE Widuj||RCV|CLONE501 ||CNT|Confirm : DISTANCE::U0VTU0lPTjo6b3J3TzFFRWEgRElTVEFOQ0U=||"}}
+{"date":"2021-11-04 22:03:52:956","record":{"agent":"CLONE501","info":"Bought sensor DISTANCE"}}
+{"date":"2021-11-04 22:03:52:957","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|STORE Widuj ||CNT|Request product ANGULAR session SESSION::orwO1EEa||"}}
+{"date":"2021-11-04 22:03:52:993","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|STORE Widuj||RCV|CLONE501 ||CNT|Confirm : ANGULAR::U0VTU0lPTjo6b3J3TzFFRWEgQU5HVUxBUg==||"}}
+{"date":"2021-11-04 22:03:52:994","record":{"agent":"CLONE501","info":"Bought sensor ANGULAR"}}
+{"date":"2021-11-04 22:03:52:995","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|STORE Widuj ||CNT|Request product LIDARHQ session SESSION::orwO1EEa||"}}
+{"date":"2021-11-04 22:03:53:029","record":{"agent":"CLONE501","info":"⬛ Received ACLM ||SND|STORE Widuj||RCV|CLONE501 ||CNT|Confirm : LIDARHQ::U0VTU0lPTjo6b3J3TzFFRWEgTElEQVJIUQ==||"}}
+{"date":"2021-11-04 22:03:53:030","record":{"agent":"CLONE501","info":"Bought sensor LIDARHQ"}}
+{"date":"2021-11-04 22:03:53:031","record":{"agent":"CLONE501","info":"Bought all sensor keys GPS::U0VTU0lPTjo6b3J3TzFFRWEgR1BT DISTANCE::U0VTU0lPTjo6b3J3TzFFRWEgRElTVEFOQ0U= ANGULAR::U0VTU0lPTjo6b3J3TzFFRWEgQU5HVUxBUg== LIDARHQ::U0VTU0lPTjo6b3J3TzFFRWEgTElEQVJIUQ== "}}
+{"date":"2021-11-04 22:03:53:031","record":{"agent":"CLONE501","info":"Status: JOINSESSION"}}
+{"date":"2021-11-04 22:03:55:243","record":{"agent":"CLONE501","info":"⬜ Sending ACLM ||SND|CLONE501||RCV|S.M. Nol ||CNT|Request join session SESSION::orwO1EEa attach sensors GPS::U0VTU0lPTjo6b3J3TzFFRWEgR1BT DISTANCE::U0VTU0lPTjo6b3J3TzFFRWEgRElTVEFOQ0U= ANGULAR::U0VTU0lPTjo6b3J3TzFFRWEgQU5HVUxBUg== LIDARHQ::U0VTU0lPTjo6b3J3TzFFRWEgTElEQVJIUQ== ||"}}
+{"date":"2021-11-04 22:03:59:442","record":{"agent":"CLONE501","info":"Taking down and deleting agent"}}
