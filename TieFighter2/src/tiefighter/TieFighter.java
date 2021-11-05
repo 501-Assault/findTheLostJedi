@@ -15,7 +15,7 @@ public class TieFighter {
             connection.Boot(host, 1099);
         }
 
-        connection.launchAgent("CLONE50", MyFirstTieFighter.class);
+        connection.launchAgent("CLONE5010", MyFirstTieFighter.class);
         connection.WaitToShutDown();
     }
 }
