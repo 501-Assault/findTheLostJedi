@@ -14,6 +14,7 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
     ACLMessage open, session;
     String[] contentTokens;
     boolean step = true;
+    boolean avoid = false;
 
     // Agent status
     enum Status {
@@ -27,18 +28,18 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
             "Abafar", "Batuu", "Chandrila", "Dathomir", "Endor",
             "Felucia", "Hoth", "Mandalore", "Tatooine", "Wobani"
     };
-        // -- Preselected problem
+    // -- Preselected problem
     String problem = WORLDS[0];
 
     // World sizes
     int width, height, maxFlight;
 
     // Sensors information
-        // -- Integrated into the TieFighter
+    // -- Integrated into the TieFighter
     String[] mySensors = new String[] { "GPS", "DISTANCE", "ANGULAR", "LIDARHQ" };
     double gps[], distance, angular;
     int lidarhq[][];
-        // -- Calculated
+    // -- Calculated
     double energy = 3500.0;
     int orientation = 0;
 
@@ -248,20 +249,50 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
     }
 
     // World information (Some getters and setters)
-        //-- World sizes
+    //-- World sizes
     public int getWorldWidth() { return width; }
     public int getWorldHeight() { return height; }
     public int getWorldMaxFlight() { return maxFlight; }
-        //-- Altitude
+    //-- Altitude
     public double getAltitude() { return gps[2]; }
-        //-- Energy
+    //-- Energy
     public double getEnergy() { return energy; }
     public void reduceEnergy(int energyPoints) { energy -= energyPoints; }
     public void fillEnergy() { energy = 3500.0; }
-        //-- Orientation
+    //-- Orientation
     public int getOrientation() { return orientation; }
     public void setOrientation(int newOrientation) { orientation = newOrientation; }
-        //-- Last action
+
+    //Traduce los rangos continuos del angular a los rangos discretos del orientation
+    public int getAngularOrientation() {
+        if((angular > 337.5 && angular <= 360)||(angular > 0 && angular < 22.5)) {
+            return 0;
+        }
+        else if (angular > 22.5 && angular <= 67.5) {
+            return 45;
+        }
+        else if (angular > 67.5 && angular <= 112.5) {
+            return 90;
+        }
+        else if (angular > 112.5 && angular <= 157.5) {
+            return 135;
+        }
+        else if (angular > 157.5 && angular <= 202.5) {
+            return 180;
+        }
+        else if (angular > 202.5 && angular <= 247.5 ) {
+            return 225;
+        }
+        else if (angular > 247.5 && angular < 292.5) {
+            return 270;
+        }
+        else {
+            return 315;
+        }
+
+    }
+
+    //-- Last action
     public String getLastAction() { return lastAction; }
     public void setLastAction(String action) { lastAction = action; }
 
@@ -284,7 +315,7 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
         showSensorsInfo();
         return true;
     }
-        //-- Sensors information from myDashboard
+    //-- Sensors information from myDashboard
     public void getSensorsInfo() {
         gps = myDashboard.getGPS();
         angular = myDashboard.getAngular();
@@ -292,7 +323,7 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
         lidarhq = myDashboard.getLidar();
     }
     // Display sensors information
-        //-- Integrated sensors
+    //-- Integrated sensors
     public void showSensorsInfo() {
         showAgentInfo();
         Info("Reading of GPS\nX=" + gps[0] + " Y=" + gps[1] + " Z=" + gps[2]);
@@ -310,7 +341,7 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
         }
         Info(message);
     }
-        //-- Calculated sensor information
+    //-- Calculated sensor information
     public void showAgentInfo() {
         Info("Agent orientation= " + getOrientation() + "º");
         Info("Agent energy= " + getEnergy());
@@ -373,25 +404,16 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
             actions.addAll(rechargeBattery());
             return actions;
         }
-        else if (getOrientation() - 22.5 <= angular && angular <= getOrientation() + 22.5) {
-            /* bool castaña = false
-                if(!isMovePossible()){
-                    castaña=true;
-                }
-                while(castaña){
-                castaña = false;
-                actions.add(left);
-                if(lidarIzq <0){
-                    castaña = true;
-                    actions.add(left);
-                    }
-                }
-                actions.add(move);
-            */
+        else if ((getOrientation() - 22.5 <= angular && angular <= getOrientation() + 22.5) && !avoid) { //Si no hay que girar ni que esquivar
+            if(!isMovePossible(getOrientation())) {
+                avoid = true;
+                return actions;
+            }
+
             actions.add("MOVE");
             return actions;
         }
-        else {
+        else if(!avoid) {
             double angularDistance1 = angular - getOrientation();
             double angularDistance2 = 360 - angularDistance1;
             if (angularDistance1 >= 0) {
@@ -402,6 +424,24 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
                 if (Math.abs(angularDistance1) <= angularDistance2) { actions.add(turnRight()); }
                 else { actions.add(turnLeft()); }
             }
+            return actions;
+        }
+        else if(avoid) {
+            // Si es posible moverme hacia donde está el objetivo termino de esquivar
+            if (isMovePossible(getAngularOrientation())) {
+                avoid = false;
+                while(getOrientation()!=getAngularOrientation())
+                    actions.add(turnRight());
+                return actions;
+            } else if (isMovePossible(getOrientation())) {
+                actions.add("MOVE");
+                return actions;
+            } else {
+                actions.add(turnLeft());
+                return actions;
+            }
+        }
+        else{
             return actions;
         }
     }
@@ -441,9 +481,9 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
 
     public boolean isInterestingToRecharge() { return getEnergy() < 800 && lidarhq[10][10] <= 55; }
 
-    public boolean isMovePossible() {
+    public boolean isMovePossible(int supposedOrientation) {
         int x = 10, y = 10;
-        switch (getOrientation()) {
+        switch (supposedOrientation) {
             case 0: // Este [10][11]
                 y += 1;
                 break;
@@ -475,4 +515,5 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
         }
         return lidarhq[x][y] >= 0;
     }
+
 }
