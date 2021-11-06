@@ -14,7 +14,6 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
     ACLMessage open, session;
     String[] contentTokens;
     boolean step = true;
-    boolean avoid = false;
 
     // Agent status
     enum Status {
@@ -28,23 +27,24 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
             "Abafar", "Batuu", "Chandrila", "Dathomir", "Endor",
             "Felucia", "Hoth", "Mandalore", "Tatooine", "Wobani"
     };
-    // -- Preselected problem
+        //-- Preselected problem
     String problem = WORLDS[0];
 
     // World sizes
     int width, height, maxFlight;
 
     // Sensors information
-    // -- Integrated into the TieFighter
-    String[] mySensors = new String[] { "GPS", "DISTANCE", "ANGULAR", "LIDARHQ" };
+        //-- Integrated into the TieFighter
+    String[] mySensors = new String[] { "GPS", "DISTANCE", "ANGULAR", "LIDAR" };
     double gps[], distance, angular;
-    int lidarhq[][];
-    // -- Calculated
+    int lidar[][];
+        //-- Calculated
     double energy = 3500.0;
     int orientation = 0;
 
     // Memory
     String lastAction = "";
+    boolean avoidCrash = false;
 
     /**** METHODS ****/
     // Up, Execute, Down Agent
@@ -249,22 +249,20 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
     }
 
     // World information (Some getters and setters)
-    //-- World sizes
+        //-- World sizes
     public int getWorldWidth() { return width; }
     public int getWorldHeight() { return height; }
     public int getWorldMaxFlight() { return maxFlight; }
-    //-- Altitude
+        //-- Altitude
     public double getAltitude() { return gps[2]; }
-    //-- Energy
+        //-- Energy
     public double getEnergy() { return energy; }
     public void reduceEnergy(int energyPoints) { energy -= energyPoints; }
     public void fillEnergy() { energy = 3500.0; }
-    //-- Orientation
+        //-- Orientation
     public int getOrientation() { return orientation; }
     public void setOrientation(int newOrientation) { orientation = newOrientation; }
-
-    //Traduce los rangos continuos del angular a los rangos discretos del orientation
-    public int getAngularOrientation() {
+    public int getAngularOrientation() { // Traduce los rangos continuos del angular a los rangos discretos del orientation
         if((angular > 337.5 && angular <= 360)||(angular > 0 && angular < 22.5)) {
             return 0;
         }
@@ -292,7 +290,7 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
 
     }
 
-    //-- Last action
+        //-- Last action
     public String getLastAction() { return lastAction; }
     public void setLastAction(String action) { lastAction = action; }
 
@@ -315,33 +313,33 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
         showSensorsInfo();
         return true;
     }
-    //-- Sensors information from myDashboard
+        //-- Sensors information from myDashboard
     public void getSensorsInfo() {
         gps = myDashboard.getGPS();
         angular = myDashboard.getAngular();
         distance = myDashboard.getDistance();
-        lidarhq = myDashboard.getLidar();
+        lidar = myDashboard.getLidar();
     }
     // Display sensors information
-    //-- Integrated sensors
+        //-- Integrated sensors
     public void showSensorsInfo() {
         showAgentInfo();
         Info("Reading of GPS\nX=" + gps[0] + " Y=" + gps[1] + " Z=" + gps[2]);
         Info("Reading of angular= " + angular + "º");
         Info("Reading of distance= " + distance + "m");
-        String message = "Reading of sensor LidarHQ;\n";
-        for (int x = 0; x < lidarhq.length; x++) {
-            for (int y = 0; y < lidarhq[0].length; y++) {
-                if (-2147483648 == lidarhq[x][y])
+        String message = "Reading of sensor Lidar;\n";
+        for (int x = 0; x < lidar.length; x++) {
+            for (int y = 0; y < lidar[0].length; y++) {
+                if (-2147483648 == lidar[x][y])
                     message += String.format("---{%d, %d}\t", x, y);
                 else
-                    message += String.format("%03d{%d, %d}\t", lidarhq[x][y], x, y);
+                    message += String.format("%03d{%d, %d}\t", lidar[x][y], x, y);
             }
             message += "\n";
         }
         Info(message);
     }
-    //-- Calculated sensor information
+        //-- Calculated sensor information
     public void showAgentInfo() {
         Info("Agent orientation= " + getOrientation() + "º");
         Info("Agent energy= " + getEnergy());
@@ -362,7 +360,7 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
     public ArrayList<String> goToGround() {
         ArrayList<String> actions = new ArrayList<String>();
 
-        int numberOfDowns = lidarhq[10][10] / 5;
+        int numberOfDowns = lidar[5][5] / 5;
         for (int i = 0; i < numberOfDowns; i++)
             actions.add("DOWN");
 
@@ -404,45 +402,41 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
             actions.addAll(rechargeBattery());
             return actions;
         }
-        else if ((getOrientation() - 22.5 <= angular && angular <= getOrientation() + 22.5) && !avoid) { //Si no hay que girar ni que esquivar
-            if(!isMovePossible(getOrientation())) {
-                avoid = true;
-                return actions;
+        else if (!isNecessaryToAvoidCrash()) { // Si no hay que esquivar
+            if (isInRightOrientation()) { // Si está en la dirección del objetivo | Intenta avanzar
+                if(isMovePossible(getOrientation())) { actions.add("MOVE"); }
+                else { avoidCrash = true; } // Si hay un obstáculo delante
             }
-
-            actions.add("MOVE");
-            return actions;
-        }
-        else if(!avoid) {
-            double angularDistance1 = angular - getOrientation();
-            double angularDistance2 = 360 - angularDistance1;
-            if (angularDistance1 >= 0) {
-                if (angularDistance1 <= angularDistance2) { actions.add(turnLeft()); }
-                else { actions.add(turnRight()); }
-            }
-            else {
-                if (Math.abs(angularDistance1) <= angularDistance2) { actions.add(turnRight()); }
-                else { actions.add(turnLeft()); }
+            else { // Si no está en la dirección del objetivo | Gira
+                double angularDistance1 = angular - getOrientation();
+                double angularDistance2 = 360 - angularDistance1;
+                if (angularDistance1 >= 0) {
+                    if (angularDistance1 <= angularDistance2) { actions.add(turnLeft()); }
+                    else { actions.add(turnRight()); }
+                }
+                else {
+                    if (Math.abs(angularDistance1) <= angularDistance2) { actions.add(turnRight()); }
+                    else { actions.add(turnLeft()); }
+                }
             }
             return actions;
         }
-        else if(avoid) {
-            // Si es posible moverme hacia donde está el objetivo termino de esquivar
-            if (isMovePossible(getAngularOrientation())) {
-                avoid = false;
-                while(getOrientation()!=getAngularOrientation())
+        else { // Si hay que esquivar
+            if (isMovePossible(getAngularOrientation())) { // Si es posible moverme hacia donde está el objetivo termino de esquivar
+                avoidCrash = false;
+                while(getOrientation() != getAngularOrientation()) {
                     actions.add(turnRight());
+                }
                 return actions;
-            } else if (isMovePossible(getOrientation())) {
+            }
+            else if (isMovePossible(getOrientation())) {
                 actions.add("MOVE");
                 return actions;
-            } else {
+            }
+            else {
                 actions.add(turnLeft());
                 return actions;
             }
-        }
-        else{
-            return actions;
         }
     }
 
@@ -469,20 +463,24 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
     }
 
     // Condition checks
-    public boolean isOnTheGround() { return lidarhq[10][10] == 0; }
+    public boolean isOnTheGround() { return lidar[5][5] == 0; }
 
-    public boolean isAboveTarget() { return distance == 0 && lidarhq[10][10] > 0; }
+    public boolean isAboveTarget() { return distance == 0 && lidar[5][5] > 0; }
 
-    public boolean isOnTarget() { return distance == 0 && lidarhq[10][10] == 0; }
+    public boolean isOnTarget() { return distance == 0 && lidar[5][5] == 0; }
+
+    private boolean isInRightOrientation() {
+        return getOrientation() - 22.5 <= angular && angular <= getOrientation() + 22.5;
+    }
 
     public boolean isLastAction(String action) { return lastAction == action;   }
 
     public boolean isNecessaryToRecharge() { return getEnergy() <= (getWorldMaxFlight() / 5) * 2; }
 
-    public boolean isInterestingToRecharge() { return getEnergy() < 800 && lidarhq[10][10] <= 55; }
+    public boolean isInterestingToRecharge() { return getEnergy() < 800 && lidar[5][5] <= 55; }
 
     public boolean isMovePossible(int supposedOrientation) {
-        int x = 10, y = 10;
+        int x = 5, y = 5;
         switch (supposedOrientation) {
             case 0: // Este [10][11]
                 y += 1;
@@ -513,7 +511,9 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
                 y += 1;
                 break;
         }
-        return lidarhq[x][y] >= 0;
+        return lidar[x][y] >= 0;
     }
+
+    public boolean isNecessaryToAvoidCrash() { return avoidCrash; }
 
 }
