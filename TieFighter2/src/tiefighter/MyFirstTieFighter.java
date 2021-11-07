@@ -370,24 +370,24 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
 //        }
 //        Info(message);
 
-        Info("visual lenght : "+ visualhq.length);
-        String message = "Reading of sensor Visual;\n";
-        for (int x = 0; x < visualhq.length; x++) {
-            for (int y = 0; y < visualhq.length; y++) {
-                message += String.format("%03d\t", visualhq[x][y]);
-            }
-            message += "\n";
-        }
-        Info(message);
-
-        message = "Reading of obstacles ;\n";
-        for (int x = 0; x < obstacles.length; x++) {
-            for (int y = 0; y < obstacles[0].length; y++) {
-                message += String.format("%03d ", obstacles[x][y]);
-            }
-            message += "\n";
-        }
-        Info(message);
+//        Info("visual lenght : "+ visualhq.length);
+//        String message = "Reading of sensor Visual;\n";
+//        for (int x = 0; x < visualhq.length; x++) {
+//            for (int y = 0; y < visualhq.length; y++) {
+//                message += String.format("%03d\t", visualhq[x][y]);
+//            }
+//            message += "\n";
+//        }
+//        Info(message);
+//
+//        message = "Reading of obstacles ;\n";
+//        for (int x = 0; x < obstacles.length; x++) {
+//            for (int y = 0; y < obstacles[0].length; y++) {
+//                message += String.format("%03d ", obstacles[x][y]);
+//            }
+//            message += "\n";
+//        }
+//        Info(message);
     }
     //-- Calculated sensor information
     public void showAgentInfo() {
