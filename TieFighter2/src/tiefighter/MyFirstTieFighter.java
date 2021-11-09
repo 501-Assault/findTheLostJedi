@@ -23,7 +23,7 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
     Status mystatus;
 
     // Problem worlds
-    String WORLDS[] = {
+    final String WORLDS[] = {
             "Abafar", "Batuu", "Chandrila", "Dathomir", "Endor",
             "Felucia", "Hoth", "Mandalore", "Tatooine", "Wobani"
     };
@@ -38,13 +38,17 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
     String[] mySensors = new String[] { "GPS", "DISTANCE", "ANGULAR", "LIDAR" };
     double gps[], distance, angular;
     int lidar[][];
+    final int AGENT_IN_LIDAR_X = 5, AGENT_IN_LIDAR_Y = 5;
         //-- Calculated
     double energy = 3500.0;
     int orientation = 0;
+    Position3D position3D = new Position3D(-1, -1, -1);
 
     // Memory
     String lastAction = "";
     boolean avoidCrash = false;
+    boolean moveState = true;
+    ArrayList<Position3D> route = new ArrayList<Position3D>();
 
     /**** METHODS ****/
     // Up, Execute, Down Agent
@@ -226,11 +230,12 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
             if (!readSensors()) { return Status.CLOSEPROBLEM; }
 
             if (firstTime) {
+                setPosition3DToSensorsValue();
                 actions.add("RECHARGE");
                 actions.addAll(goToMaximumAltitude());
                 firstTime = false;
             }
-            else if (isOnTheGround() && isLastAction("RECHARGE") && getAltitude() != (getWorldMaxFlight() / 5) * 5) {
+            else if (isOnTheGround() && isLastAction("RECHARGE") && !isFlyingAtMaximumAltitude()) {
                 actions.addAll(goToMaximumAltitude());
             }
             else {
@@ -253,6 +258,7 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
     public int getWorldWidth() { return width; }
     public int getWorldHeight() { return height; }
     public int getWorldMaxFlight() { return maxFlight; }
+    public int getWorldMaxFlightAltitude() { return (getWorldMaxFlight() / 5) * 5; }
         //-- Altitude
     public double getAltitude() { return gps[2]; }
         //-- Energy
@@ -263,34 +269,52 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
     public int getOrientation() { return orientation; }
     public void setOrientation(int newOrientation) { orientation = newOrientation; }
     public int getAngularOrientation() { // Traduce los rangos continuos del angular a los rangos discretos del orientation
-        if((angular > 337.5 && angular <= 360)||(angular > 0 && angular < 22.5)) {
+        if((337.5 < angular && angular <= 360) || (0 < angular && angular <= 22.5)) {
             return 0;
         }
-        else if (angular > 22.5 && angular <= 67.5) {
+        else if (22.5 < angular && angular <= 67.5) {
             return 45;
         }
-        else if (angular > 67.5 && angular <= 112.5) {
+        else if (67.5 < angular && angular <= 112.5) {
             return 90;
         }
-        else if (angular > 112.5 && angular <= 157.5) {
+        else if (112.5 < angular && angular <= 157.5) {
             return 135;
         }
-        else if (angular > 157.5 && angular <= 202.5) {
+        else if (157.5 < angular && angular <= 202.5) {
             return 180;
         }
-        else if (angular > 202.5 && angular <= 247.5 ) {
+        else if (202.5 < angular && angular <= 247.5 ) {
             return 225;
         }
-        else if (angular > 247.5 && angular < 292.5) {
+        else if (247.5 < angular && angular <= 292.5) {
             return 270;
         }
-        else {
+        else /*if (292.5 < angular && angular <= 337.5)*/ {
             return 315;
         }
-
+    }
+        //-- Position
+    public void setPosition3DToSensorsValue() {
+            position3D.setX(gps[0]);
+            position3D.setY(gps[1]);
+            position3D.setZ(gps[2]);
+        }
+    public void updatePosition3D(String action) {
+        switch (action) {
+            case "UP":
+                position3D.setZ(position3D.getZ()+5);
+                break;
+            case "DOWN":
+                position3D.setZ(position3D.getZ()-5);
+                break;
+            case "MOVE":
+                position3D = nextPositionIfMove(getOrientation());
+                break;
+        }
     }
 
-        //-- Last action
+    //-- Last action
     public String getLastAction() { return lastAction; }
     public void setLastAction(String action) { lastAction = action; }
 
@@ -323,7 +347,6 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
     // Display sensors information
         //-- Integrated sensors
     public void showSensorsInfo() {
-        showAgentInfo();
         Info("Reading of GPS\nX=" + gps[0] + " Y=" + gps[1] + " Z=" + gps[2]);
         Info("Reading of angular= " + angular + "º");
         Info("Reading of distance= " + distance + "m");
@@ -341,9 +364,12 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
     }
         //-- Calculated sensor information
     public void showAgentInfo() {
+        Info("Agent position= \nX=" + position3D.getX() + " Y=" + position3D.getY() + " Z=" + position3D.getZ());
         Info("Agent orientation= " + getOrientation() + "º");
         Info("Agent energy= " + getEnergy());
     }
+
+    public void changeMoveState() { moveState = !moveState; }
 
     // Single actions
     public String turnLeft() {
@@ -360,7 +386,7 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
     public ArrayList<String> goToGround() {
         ArrayList<String> actions = new ArrayList<String>();
 
-        int numberOfDowns = lidar[5][5] / 5;
+        int numberOfDowns = lidar[AGENT_IN_LIDAR_X][AGENT_IN_LIDAR_Y] / 5;
         for (int i = 0; i < numberOfDowns; i++)
             actions.add("DOWN");
 
@@ -425,7 +451,8 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
             if (isMovePossible(getAngularOrientation())) { // Si es posible moverme hacia donde está el objetivo termino de esquivar
                 avoidCrash = false;
                 while(getOrientation() != getAngularOrientation()) {
-                    actions.add(turnRight());
+                    if (moveState) actions.add(turnRight());
+                    else actions.add(turnLeft());
                 }
                 return actions;
             }
@@ -434,7 +461,8 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
                 return actions;
             }
             else {
-                actions.add(turnLeft());
+                if (moveState) actions.add(turnLeft());
+                else actions.add(turnRight());
                 return actions;
             }
         }
@@ -457,27 +485,46 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
         if (action == "RECHARGE") { fillEnergy(); }
         else if (action != "CAPTURE") { reduceEnergy(1); }
 
+        showAgentInfo();
+
+        if (action == "MOVE") {
+            boolean in = true;
+            for (Position3D position : route) {
+                if (position.isEqualTo2D(position3D.getX(), position3D.getY()) && in) {
+                    if (isCloseToBoundaries())
+                        changeMoveState();
+                    in = false;
+                };
+            }
+            route.add(new Position3D(position3D.getX(), position3D.getY(), position3D.getZ()));
+        }
+
+        updatePosition3D(action);
         setLastAction(action);
 
         return true;
     }
 
     // Condition checks
-    public boolean isOnTheGround() { return lidar[5][5] == 0; }
+    public boolean isOnTheGround() { return lidar[AGENT_IN_LIDAR_X][AGENT_IN_LIDAR_Y] == 0; }
 
-    public boolean isAboveTarget() { return distance == 0 && lidar[5][5] > 0; }
+    public boolean isAboveTarget() { return distance == 0 && lidar[AGENT_IN_LIDAR_X][AGENT_IN_LIDAR_Y] > 0; }
 
-    public boolean isOnTarget() { return distance == 0 && lidar[5][5] == 0; }
+    public boolean isOnTarget() { return distance == 0 && lidar[AGENT_IN_LIDAR_X][AGENT_IN_LIDAR_Y] == 0; }
 
     private boolean isInRightOrientation() {
         return getOrientation() - 22.5 <= angular && angular <= getOrientation() + 22.5;
     }
 
+    public boolean isFlyingAtMaximumAltitude() {
+        return getAltitude() == getWorldMaxFlightAltitude();
+    }
+    
     public boolean isLastAction(String action) { return lastAction == action;   }
 
     public boolean isNecessaryToRecharge() { return getEnergy() <= (getWorldMaxFlight() / 5) * 2; }
 
-    public boolean isInterestingToRecharge() { return getEnergy() < 800 && lidar[5][5] <= 55; }
+    public boolean isInterestingToRecharge() { return getEnergy() < 800 && lidar[AGENT_IN_LIDAR_X][AGENT_IN_LIDAR_Y] <= 55; }
 
     public boolean isMovePossible(int supposedOrientation) {
         int x = 5, y = 5;
@@ -516,4 +563,52 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
 
     public boolean isNecessaryToAvoidCrash() { return avoidCrash; }
 
+    public boolean isCloseToBoundaries() {
+        final int DISTANCE_TO_BE_CLOSE = 4;
+        boolean isCloseToNorth = gps[1] <= DISTANCE_TO_BE_CLOSE;
+        boolean isCloseToWest = gps[0] <= DISTANCE_TO_BE_CLOSE;
+        boolean isCloseToSouth = gps[1] + DISTANCE_TO_BE_CLOSE >= getWorldHeight();
+        boolean isCloseToEast = gps[0] + DISTANCE_TO_BE_CLOSE >= getWorldWidth();
+        return isCloseToNorth || isCloseToWest || isCloseToSouth || isCloseToEast;
+    }
+
+    public boolean nextPositionIsPreviousPosition(int supposedOrientation) {
+        Position3D nextPosition = nextPositionIfMove(supposedOrientation);
+        return route.get(route.size()-1).isEqualTo2D(nextPosition.getX(), nextPosition.getY());
+    }
+
+    public Position3D nextPositionIfMove(int supposedOrientation) {
+        double x = position3D.getX(), y = position3D.getY(), z = position3D.getZ();
+        switch (supposedOrientation) {
+            case 0:
+                x += 1;
+                break;
+            case 45:
+                y -= 1;
+                x += 1;
+                break;
+            case 90:
+                y -= 1;
+                break;
+            case 135:
+                y -= 1;
+                x -= 1;
+                break;
+            case 180:
+                x -= 1;
+                break;
+            case 225:
+                y += 1;
+                x -= 1;
+                break;
+            case 270:
+                y += 1;
+                break;
+            case 315:
+                y += 1;
+                x += 1;
+                break;
+        }
+        return new Position3D(x, y, z);
+    }
 }
