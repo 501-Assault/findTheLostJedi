@@ -448,7 +448,7 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
             return actions;
         }
         else { // Si hay que esquivar
-            if (isMovePossible(getAngularOrientation())) { // Si es posible moverme hacia donde está el objetivo termino de esquivar
+            if (isMovePossible(getAngularOrientation()) && !nextPositionHasBeenVisited(getAngularOrientation(), 10)) { // Si es posible moverme hacia donde está el objetivo termino de esquivar
                 avoidCrash = false;
                 while(getOrientation() != getAngularOrientation()) {
                     if (moveState) actions.add(turnRight());
@@ -456,7 +456,7 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
                 }
                 return actions;
             }
-            else if (isMovePossible(getOrientation())) {
+            else if (isMovePossible(getOrientation()) && !leaveEdge(getOrientation()) && !doIComeFromThere(getOrientation())) {
                 actions.add("MOVE");
                 return actions;
             }
@@ -527,7 +527,7 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
     public boolean isInterestingToRecharge() { return getEnergy() < 800 && lidar[AGENT_IN_LIDAR_X][AGENT_IN_LIDAR_Y] <= 55; }
 
     public boolean isMovePossible(int supposedOrientation) {
-        int x = 5, y = 5;
+        int x = AGENT_IN_LIDAR_X, y = AGENT_IN_LIDAR_Y;
         switch (supposedOrientation) {
             case 0: // Este [10][11]
                 y += 1;
@@ -575,6 +575,266 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
     public boolean nextPositionIsPreviousPosition(int supposedOrientation) {
         Position3D nextPosition = nextPositionIfMove(supposedOrientation);
         return route.get(route.size()-1).isEqualTo2D(nextPosition.getX(), nextPosition.getY());
+    }
+
+    //Alberto
+    public boolean nextPositionHasBeenVisited(int supposedOrientation, int scope) {
+        if(route.size()<scope)
+            scope = route.size();
+
+        Position3D nextPosition = nextPositionIfMove(supposedOrientation);
+        boolean visited = false;
+        for(int i = route.size()-1; i>=route.size()-scope; i--)
+            if(route.get(i).isEqualTo2D(nextPosition.getX(), nextPosition.getY()))
+                visited = true;
+
+        return visited;
+    }
+
+    //Alberto
+    public boolean doIComeFromThere(int supposedOrientation){
+        boolean indeed = false;
+        int x=(int)gps[0], y=(int)gps[1];
+        boolean restoY=false, sumoY=false, restoX=false, sumoX=false;
+        switch (supposedOrientation){
+            case 0:
+                for(int i=x; i<getWorldWidth(); i++)
+                    for(Position3D step: route)
+                        if(step.isEqualTo2D(i,y))
+                            indeed=true;
+
+                break;
+            case 45:
+                for(int i=x, j=y; i<getWorldWidth() || j>=0; i++, j--)
+                    for(Position3D step: route)
+                        if(step.isEqualTo2D(i,j))
+                            indeed=true;
+
+                break;
+            case 90:
+                for(int j=y; j>=0; j--)
+                    for(Position3D step: route)
+                        if(step.isEqualTo2D(x,j))
+                            indeed=true;
+                break;
+            case 135:
+                for(int i=x, j=y; i>=0 || j>=0; i--, j--)
+                    for(Position3D step: route)
+                        if(step.isEqualTo2D(i,j))
+                            indeed=true;
+
+                break;
+            case 180:
+                for(int i=x; i>=0; i--)
+                    for(Position3D step: route)
+                        if(step.isEqualTo2D(i,y))
+                            indeed=true;
+
+                break;
+            case 225:
+                for(int i=x, j=y; i>=0 || j<getWorldHeight(); i--, j++)
+                    for(Position3D step: route)
+                        if(step.isEqualTo2D(i,j))
+                            indeed=true;
+
+                break;
+            case 270:
+                for(int j=y; j<getWorldHeight(); j++)
+                    for(Position3D step: route)
+                        if(step.isEqualTo2D(x,j))
+                            indeed=true;
+
+                break;
+            case 315:
+                for(int i=x, j=y; i<getWorldWidth() || j<getWorldHeight(); i++, j++)
+                    for(Position3D step: route)
+                        if(step.isEqualTo2D(i,j))
+                            indeed=true;
+                break;
+        }
+        return indeed;
+    }
+
+    public boolean doIComeFromThereRouteShort(int supposedOrientation, int scope){
+        if(route.size()<scope)
+            scope = route.size();
+
+        boolean indeed = false;
+        int x=(int)gps[0], y=(int)gps[1];
+        boolean restoY=false, sumoY=false, restoX=false, sumoX=false;
+        switch (supposedOrientation){
+            case 0:
+                for(int i=x; i<getWorldWidth(); i++)
+                    for(int z = route.size()-1; z>=route.size()-scope; z--)
+                        if(route.get(z).isEqualTo2D(i,y))
+                            indeed=true;
+
+                break;
+            case 45:
+                for(int i=x, j=y; i<getWorldWidth() || j>=0; i++, j--)
+                    for(int z = route.size()-1; z>=route.size()-scope; z--)
+                        if(route.get(z).isEqualTo2D(i,j))
+                            indeed=true;
+
+                break;
+            case 90:
+                for(int j=y; j>=0; j--)
+                    for(int z = route.size()-1; z>=route.size()-scope; z--)
+                        if(route.get(z).isEqualTo2D(x,j))
+                            indeed=true;
+                break;
+            case 135:
+                for(int i=x, j=y; i>=0 || j>=0; i--, j--)
+                    for(int z = route.size()-1; z>=route.size()-scope; z--)
+                        if(route.get(z).isEqualTo2D(i,j))
+                            indeed=true;
+
+                break;
+            case 180:
+                for(int i=x; i>=0; i--)
+                    for(int z = route.size()-1; z>=route.size()-scope; z--)
+                        if(route.get(z).isEqualTo2D(i,y))
+                            indeed=true;
+
+                break;
+            case 225:
+                for(int i=x, j=y; i>=0 || j<getWorldHeight(); i--, j++)
+                    for(int z = route.size()-1; z>=route.size()-scope; z--)
+                        if(route.get(z).isEqualTo2D(i,j))
+                            indeed=true;
+
+                break;
+            case 270:
+                for(int j=y; j<getWorldHeight(); j++)
+                    for(int z = route.size()-1; z>=route.size()-scope; z--)
+                        if(route.get(z).isEqualTo2D(x,j))
+                            indeed=true;
+
+                break;
+            case 315:
+                for(int i=x, j=y; i<getWorldWidth() || j<getWorldHeight(); i++, j++)
+                    for(int z = route.size()-1; z>=route.size()-scope; z--)
+                        if(route.get(z).isEqualTo2D(i,j))
+                            indeed=true;
+                break;
+        }
+        return indeed;
+    }
+
+    public boolean doIComeFromThereScoped(int supposedOrientation, int scope){
+        boolean indeed = false;
+        int x=(int)gps[0], y=(int)gps[1];
+        boolean restoY=false, sumoY=false, restoX=false, sumoX=false;
+        switch (supposedOrientation){
+            case 0:
+                for(int i=x; i<x+scope; i++)
+                    for(Position3D step: route)
+                        if(step.isEqualTo2D(i,y))
+                            indeed=true;
+
+                break;
+            case 45:
+                for(int i=x, j=y; i<x+scope || j>=y-scope; i++, j--)
+                    for(Position3D step: route)
+                        if(step.isEqualTo2D(i,j))
+                            indeed=true;
+
+                break;
+            case 90:
+                for(int j=y; j>=y-scope; j--)
+                    for(Position3D step: route)
+                        if(step.isEqualTo2D(x,j))
+                            indeed=true;
+                break;
+            case 135:
+                for(int i=x, j=y; i>=x-scope || j>=y-scope; i--, j--)
+                    for(Position3D step: route)
+                        if(step.isEqualTo2D(i,j))
+                            indeed=true;
+
+                break;
+            case 180:
+                for(int i=x; i>=x-scope; i--)
+                    for(Position3D step: route)
+                        if(step.isEqualTo2D(i,y))
+                            indeed=true;
+
+                break;
+            case 225:
+                for(int i=x, j=y; i>=x-scope || j<y+scope; i--, j++)
+                    for(Position3D step: route)
+                        if(step.isEqualTo2D(i,j))
+                            indeed=true;
+
+                break;
+            case 270:
+                for(int j=y; j<y+scope; j++)
+                    for(Position3D step: route)
+                        if(step.isEqualTo2D(x,j))
+                            indeed=true;
+
+                break;
+            case 315:
+                for(int i=x, j=y; i<x+scope || j<y+scope; i++, j++)
+                    for(Position3D step: route)
+                        if(step.isEqualTo2D(i,j))
+                            indeed=true;
+                break;
+        }
+        return indeed;
+    }
+
+    //Alberto
+    public boolean leaveEdge(int supposedOrientation){
+        Position3D point = nextPositionLidarIfMove(supposedOrientation);
+        int x = (int)point.getX(), y=(int)point.getY();
+        boolean leave = true;
+        if(lidar[x+1][y]<0){leave = false;}
+        else if(lidar[x+1][y+1]<0){leave = false;}
+        else if(lidar[x][y+1]<0){leave = false;}
+        else if(lidar[x-1][y+1]<0){leave = false;}
+        else if(lidar[x-1][y]<0){leave = false;}
+        else if(lidar[x-1][y-1]<0){leave = false;}
+        else if(lidar[x][y-1]<0){leave = false;}
+        else if(lidar[x+1][y-1]<0){leave = false;}
+        else{leave = true;}
+        return leave;
+    }
+
+    //Alberto
+    public Position3D nextPositionLidarIfMove(int supposedOrientation) {
+        double fila = AGENT_IN_LIDAR_X, columna = AGENT_IN_LIDAR_Y, z = position3D.getZ();
+        switch (supposedOrientation) {
+            case 0:
+                columna += 1;
+                break;
+            case 45:
+                fila -= 1;
+                columna += 1;
+                break;
+            case 90:
+                fila -= 1;
+                break;
+            case 135:
+                fila -= 1;
+                columna -= 1;
+                break;
+            case 180:
+                columna -= 1;
+                break;
+            case 225:
+                fila += 1;
+                columna -= 1;
+                break;
+            case 270:
+                fila += 1;
+                break;
+            case 315:
+                fila += 1;
+                columna += 1;
+                break;
+        }
+        return new Position3D(fila, columna, z);
     }
 
     public Position3D nextPositionIfMove(int supposedOrientation) {
