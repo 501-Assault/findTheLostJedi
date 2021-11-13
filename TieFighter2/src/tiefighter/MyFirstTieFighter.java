@@ -502,14 +502,14 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
                 if (lidar[AGENT_IN_LIDAR_X + x][AGENT_IN_LIDAR_Y + y] >= 0 && !(x == 0 && y == 0)) {
                     double distanceFromPosition = getDistanceToTarget(currentPosition.getX() + y, currentPosition.getY() + x);
                     int thermalValue = thermal[AGENT_IN_THERMAL_X + x][AGENT_IN_THERMAL_Y + y];
-                    if (first) {
-                        minimumThermal = thermalValue;
-                        shortestDistance = distanceFromPosition;
-                        Ax = x; Ay = y;
-                        first = false;
-                    }
-                    else if (!nextPositionHasBeenVisited(x, y, 100)) {
-                        if (minimumThermal > thermalValue && distance < 5.0) {
+                    if (!nextPositionHasBeenVisited(x, y, 100)) {
+                        if (first) {
+                            minimumThermal = thermalValue;
+                            shortestDistance = distanceFromPosition;
+                            Ax = x; Ay = y;
+                            first = false;
+                        }
+                        else if (minimumThermal > thermalValue && distance < 5.0) {
                             minimumThermal = thermalValue;
                             Ax = x; Ay = y;
                         }
