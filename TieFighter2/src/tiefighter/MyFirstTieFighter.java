@@ -603,24 +603,32 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
         else {
             for (int x = -1; x <= 1 && minimumThermal != 0; x++) {
                 for (int y = -1; y <= 1 && minimumThermal != 0; y++) {
-                    if (lidar[AGENT_IN_LIDAR_X + x][AGENT_IN_LIDAR_Y + y] >= 0 && !(x == 0 && y == 0)) {
-                        double distanceFromPosition = getDistanceToTarget(currentPosition.getX() + y, currentPosition.getY() + x);
-                        int thermalValue = thermal[AGENT_IN_THERMAL_X + x][AGENT_IN_THERMAL_Y + y];
-                        if (!nextPositionHasBeenVisited(x, y, 100)) {
-                            if (first) {
-                                minimumThermal = thermalValue;
-                                shortestDistance = distanceFromPosition;
-                                Ax = x; Ay = y;
-                                first = false;
+                    if (lidar[AGENT_IN_LIDAR_X + x][AGENT_IN_LIDAR_Y + y] >= 0) {
+                        if (!(x == 0 && y == 0)) {
+                            double distanceFromPosition = getDistanceToTarget(currentPosition.getX() + y, currentPosition.getY() + x);
+                            int thermalValue = thermal[AGENT_IN_THERMAL_X + x][AGENT_IN_THERMAL_Y + y];
+                            if (!nextPositionHasBeenVisited(x, y, 100)) {
+                                if (first) {
+                                    minimumThermal = thermalValue;
+                                    shortestDistance = distanceFromPosition;
+                                    Ax = x; Ay = y;
+                                    first = false;
+                                }
+                                else if (minimumThermal > thermalValue && distance < 5.0) {
+                                    minimumThermal = thermalValue;
+                                    Ax = x; Ay = y;
+                                }
+                                else if (shortestDistance > distanceFromPosition) {
+                                    shortestDistance = distanceFromPosition;
+                                    Ax = x; Ay = y;
+                                }
                             }
-                            else if (minimumThermal > thermalValue && distance < 5.0) {
-                                minimumThermal = thermalValue;
-                                Ax = x; Ay = y;
-                            }
-                            else if (shortestDistance > distanceFromPosition) {
-                                shortestDistance = distanceFromPosition;
-                                Ax = x; Ay = y;
-                            }
+                        }
+                    }
+                    else if (!isNecessaryToAvoidCrash()){
+                        if (!isMovePossible(getAngularOrientation())) {
+                            avoidCrash = true;
+                            route.clear();
                         }
                     }
                 }
