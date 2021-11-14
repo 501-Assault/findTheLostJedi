@@ -6,6 +6,9 @@ import jade.lang.acl.ACLMessage;
 import swing.LARVADash;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MyFirstTieFighter extends LARVAFirstAgent{
 
@@ -49,6 +52,11 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
     boolean avoidCrash = false;
     boolean moveState = true;
     ArrayList<Position3D> route = new ArrayList<Position3D>();
+    
+    List<Integer> list = new ArrayList<Integer>();
+    ArrayList<List<Integer>> directions = new ArrayList<List<Integer>>();
+    
+    int closestOrientation = 360;
 
     /**** METHODS ****/
     // Up, Execute, Down Agent
@@ -428,6 +436,27 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
             actions.addAll(rechargeBattery());
             return actions;
         }
+        else {
+            
+            if(!isInRightOrientation()){
+                double angularDistance1 = angular - getOrientation();
+                double angularDistance2 = 360 - angularDistance1;
+                if (angularDistance1 >= 0) {
+                    if (angularDistance1 <= angularDistance2) { actions.add(turnLeft()); }
+                    else { actions.add(turnRight()); }
+                }
+                else {
+                    if (Math.abs(angularDistance1) <= angularDistance2) { actions.add(turnRight()); }
+                    else { actions.add(turnLeft()); }
+                }
+            }
+                
+            readDirections();
+            actions.addAll(possibleRoad());
+            
+            return actions;
+        }
+        /*
         else if (!isNecessaryToAvoidCrash()) { // Si no hay que esquivar
             if (isInRightOrientation()) { // Si está en la dirección del objetivo | Intenta avanzar
                 if(isMovePossible(getOrientation())) { actions.add("MOVE"); }
@@ -447,7 +476,7 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
             }
             return actions;
         }
-        else { // Si hay que esquivar
+        else  { // Si hay que esquivar
             if (isMovePossible(getAngularOrientation())) { // Si es posible moverme hacia donde está el objetivo termino de esquivar
                 avoidCrash = false;
                 while(getOrientation() != getAngularOrientation()) {
@@ -465,7 +494,7 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
                 else actions.add(turnRight());
                 return actions;
             }
-        }
+        }*/
     }
 
     public boolean doAction(String action) {
@@ -582,33 +611,112 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
         switch (supposedOrientation) {
             case 0:
                 x += 1;
-                break;
+            break;
             case 45:
                 y -= 1;
                 x += 1;
-                break;
+            break;
             case 90:
                 y -= 1;
-                break;
+            break;
             case 135:
                 y -= 1;
                 x -= 1;
-                break;
+            break;
             case 180:
                 x -= 1;
-                break;
+            break;
             case 225:
                 y += 1;
                 x -= 1;
-                break;
+            break;
             case 270:
                 y += 1;
-                break;
+            break;
             case 315:
                 y += 1;
                 x += 1;
-                break;
+            break;
         }
         return new Position3D(x, y, z);
+    }
+    
+    public ArrayList<String> possibleRoad(){
+        ArrayList<String> actions = new ArrayList<String>();
+          
+        for(int i=0; i<directions.size(); i++){    
+            if(!directions.get(i).isEmpty()){
+                if((Math.abs(directions.get(i).get(0) - getAngularOrientation()))% 180 < closestOrientation){
+                    closestOrientation = directions.get(i).get(0);
+                }
+            }
+        }  
+        
+        if(getOrientation() == closestOrientation){
+            actions.add("MOVE");
+        }
+        else{
+            //while(getOrientation() != closestOrientation){
+            //actions.add(turnLeft());
+            
+        }
+        
+        return actions;
+    }
+    
+    public void readDirections(){
+        int orientation_now = 0;
+        int x=5, y=5;
+        
+        for(int i=0,j=0; i<360 && j<8; i+=45,j++){
+            
+            list.add(i);
+            directions.add(list);
+            
+            while(x<AGENT_IN_LIDAR_X+5 && y<AGENT_IN_LIDAR_Y+5){
+                
+                switch (orientation_now) {
+                    case 0: // Este [10][11]
+                        y += 1;
+                    break;
+                    case 45: // Noreste [9][11]
+                        x -= 1;
+                        y += 1;
+                    break;
+                    case 90: // Norte [9][10]
+                        x -= 1;
+                    break;
+                    case 135: // Noroeste [9][9]
+                        x -= 1;
+                        y -= 1;
+                    break;
+                    case 180: // Oeste [10][9]
+                        y -= 1;
+                    break;
+                    case 225: // Suroeste [11][9]
+                        x += 1;
+                        y -= 1;
+                    break;
+                    case 270: // Sur [11][10]
+                        x += 1;
+                    break;
+                    case 315: // Sureste [11][11]
+                        x += 1;
+                        y += 1;
+                    break;
+                }
+                
+                if(lidar[x][y] < 0){
+                    directions.get(j).clear();
+                    break;
+                }
+                else{
+                    directions.get(j).add(lidar[x][y]);
+                }
+                
+            }
+            
+            list.clear();
+        }     
     }
 }
