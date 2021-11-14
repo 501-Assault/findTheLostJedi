@@ -225,14 +225,15 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
 
     public Status MySolveProblem() {
         boolean jediCaptured = false;
+        boolean jediReachable = true;
         boolean firstTime = true;
         ArrayList<String> actions = new ArrayList<String>();
 
-        while(!jediCaptured) {
+        while(!jediCaptured && jediReachable) {
             if (!readSensors()) { return Status.CLOSEPROBLEM; }
 
             if (firstTime) {
-                setPosition3DToSensorsValue();
+                setCurrentPositionToSensorsValue();
                 setTargetPosition();
                 actions.add("RECHARGE");
                 actions.addAll(goToMaximumAltitude());
@@ -247,11 +248,14 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
 
             for (String action : actions) {
                 if (!doAction(action)) { return Status.CLOSEPROBLEM; }
-                jediCaptured = action == "CAPTURED";
+                jediCaptured = action == "CAPTURE";
+                jediReachable = action != "UNREACHABLE";
             }
 
             actions.clear();
         }
+
+        if (!readSensors()) { return Status.CLOSEPROBLEM; }
 
         return Status.CLOSEPROBLEM;
     }
@@ -298,12 +302,12 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
         }
     }
         //-- Position
-    public void setPosition3DToSensorsValue() {
+    public void setCurrentPositionToSensorsValue() {
             currentPosition.setX(gps[0]);
             currentPosition.setY(gps[1]);
             currentPosition.setZ(gps[2]);
         }
-    public void updatePosition3D(String action) {
+    public void updateCurrentPosition(String action) {
         switch (action) {
             case "UP":
                 currentPosition.setZ(currentPosition.getZ()+5);
@@ -497,80 +501,181 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
         double shortestDistance = -1.0;
         boolean first = true;
 
-        for (int x = -1; x <= 1 && minimumThermal != 0; x++) {
-            for (int y = -1; y <= 1 && minimumThermal != 0; y++) {
-                if (lidar[AGENT_IN_LIDAR_X + x][AGENT_IN_LIDAR_Y + y] >= 0 && !(x == 0 && y == 0)) {
-                    double distanceFromPosition = getDistanceToTarget(currentPosition.getX() + y, currentPosition.getY() + x);
-                    int thermalValue = thermal[AGENT_IN_THERMAL_X + x][AGENT_IN_THERMAL_Y + y];
-                    if (!nextPositionHasBeenVisited(x, y, 100)) {
-                        if (first) {
-                            minimumThermal = thermalValue;
-                            shortestDistance = distanceFromPosition;
-                            Ax = x; Ay = y;
-                            first = false;
-                        }
-                        else if (minimumThermal > thermalValue && distance < 5.0) {
-                            minimumThermal = thermalValue;
-                            Ax = x; Ay = y;
-                        }
-                        else if (shortestDistance > distanceFromPosition) {
-                            shortestDistance = distanceFromPosition;
-                            Ax = x; Ay = y;
-                        }
-                    }
-                }
-            }
+        /*
+        Analiza solo las tres casillas delanteras
+        int index[] = {};
+        switch (orientation) {
+            case 0:
+                index = new int[]{-1, 1, 0, 1, 1, 1};
+                break;
+            case 45:
+                index = new int[]{-1, 0, -1, 1, 0, 1};
+                break;
+            case 90:
+                index = new int[]{-1, -1, -1, 0, -1, 1};
+                break;
+            case 135:
+                index = new int[]{0, -1, -1, -1, -1, 0};
+                break;
+            case 180:
+                index = new int[]{1, -1, 0, -1, -1, -1};
+                break;
+            case 225:
+                index = new int[]{1, 0, 1, -1, 0, -1};
+                break;
+            case 270:
+                index = new int[]{1, 1, 1, 0, 1, -1};
+                break;
+            case 315:
+                index = new int[]{0, 1, 1, 1, 1, 0};
+                break;
         }
-
-        /*for (int x = -1; x <= 1; x++) {
-            for (int y = -1; y <= 1; y++) {
-                if (lidar[AGENT_IN_LIDAR_X + x][AGENT_IN_LIDAR_Y + y] >= 0 && !(x == 0 && y == 0)) {
-                    int thermalValue = thermal[AGENT_IN_THERMAL_X + x][AGENT_IN_THERMAL_Y + y];
+        for (int i = 0; i < 6 && minimumThermal != 0; i += 2) {
+            int x = index[i], y = index[i+1];
+            if (lidar[AGENT_IN_LIDAR_X + x][AGENT_IN_LIDAR_Y + y] >= 0 && !(x == 0 && y == 0)) {
+                double distanceFromPosition = getDistanceToTarget(currentPosition.getX() + y, currentPosition.getY() + x);
+                int thermalValue = thermal[AGENT_IN_THERMAL_X + x][AGENT_IN_THERMAL_Y + y];
+                if (!nextPositionHasBeenVisited(x, y, 0)) {
                     if (first) {
                         minimumThermal = thermalValue;
+                        shortestDistance = distanceFromPosition;
                         Ax = x; Ay = y;
                         first = false;
                     }
-                    else if (minimumThermal > thermalValue) {
+                    else if (minimumThermal > thermalValue && distance < 5.0) {
                         minimumThermal = thermalValue;
+                        Ax = x; Ay = y;
+                    }
+                    else if (shortestDistance > distanceFromPosition) {
+                        shortestDistance = distanceFromPosition;
                         Ax = x; Ay = y;
                     }
                 }
             }
+        }
+
+        if (minimumThermal == -1 && shortestDistance == -1.0) {
+            actions.add(turnRight());
         }*/
 
-        int newOrientation = orientation;
-        if (Ax == -1 && Ay == -1) {
-            newOrientation = 135;
+        // Comprueba si el objetivo es alcanzable
+        for (int i = 0; i < thermal.length; i++) {
+            for (int j = 0; j < thermal[0].length; j++)
+                if (thermal[i][j] == 0 && lidar[i][j] < 0 ) {
+                    actions.add("UNREACHABLE");
+                    return actions;
+                }
         }
-        else if (Ax == -1 && Ay == 0) {
-            newOrientation = 90;
+
+        if (isMovePossible(getOrientation()) && isInRightOrientation()) {
+            String movement;
+            switch (getOrientation()) {
+                case 0:
+                    movement = "E";
+                    break;
+                case 45:
+                    movement = "NE";
+                    break;
+                case 90:
+                    movement = "N";
+                    break;
+                case 135:
+                    movement = "NW";
+                    break;
+                case 180:
+                    movement = "W";
+                    break;
+                case 225:
+                    movement = "SW";
+                    break;
+                case 270:
+                    movement = "S";
+                    break;
+                case 315:
+                    movement = "SE";
+                    break;
+                default:
+                    movement = "NONE";
+                    break;
+            }
+            actions.addAll(goToDirection(movement));
         }
-        else if (Ax == -1 && Ay == 1) {
-            newOrientation = 45;
+        else {
+            for (int x = -1; x <= 1 && minimumThermal != 0; x++) {
+                for (int y = -1; y <= 1 && minimumThermal != 0; y++) {
+                    if (lidar[AGENT_IN_LIDAR_X + x][AGENT_IN_LIDAR_Y + y] >= 0 && !(x == 0 && y == 0)) {
+                        double distanceFromPosition = getDistanceToTarget(currentPosition.getX() + y, currentPosition.getY() + x);
+                        int thermalValue = thermal[AGENT_IN_THERMAL_X + x][AGENT_IN_THERMAL_Y + y];
+                        if (!nextPositionHasBeenVisited(x, y, 100)) {
+                            if (first) {
+                                minimumThermal = thermalValue;
+                                shortestDistance = distanceFromPosition;
+                                Ax = x; Ay = y;
+                                first = false;
+                            }
+                            else if (minimumThermal > thermalValue && distance < 5.0) {
+                                minimumThermal = thermalValue;
+                                Ax = x; Ay = y;
+                            }
+                            else if (shortestDistance > distanceFromPosition) {
+                                shortestDistance = distanceFromPosition;
+                                Ax = x; Ay = y;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (Ax == -1 && Ay == -1) { actions.addAll(goToDirection("NW")); }
+            else if (Ax == -1 && Ay == 0) { actions.addAll(goToDirection("N")); }
+            else if (Ax == -1 && Ay == 1) { actions.addAll(goToDirection("NE")); }
+            else if (Ax == 0 && Ay == -1) { actions.addAll(goToDirection("W")); }
+            else if (Ax == 0 && Ay == 0) { actions.addAll(goToDirection("NONE")); }
+            else if (Ax == 0 && Ay == 1) { actions.addAll(goToDirection("E")); }
+            else if (Ax == 1 && Ay == -1) { actions.addAll(goToDirection("SW")); }
+            else if (Ax == 1 && Ay == 0) { actions.addAll(goToDirection("S")); }
+            else if (Ax == 1 && Ay == 1) { actions.addAll(goToDirection("SE")); }
         }
-        else if (Ax == 0 && Ay == -1) {
-            newOrientation = 180;
-        }
-        else if (Ax == 0 && Ay == 0) {
-            newOrientation =-1;
-        }
-        else if (Ax == 0 && Ay == 1) {
-            newOrientation = 0;
-        }
-        else if (Ax == 1 && Ay == -1) {
-            newOrientation = 225;
-        }
-        else if (Ax == 1 && Ay == 0) {
-            newOrientation = 270;
-        }
-        else if (Ax == 1 && Ay == 1) {
-            newOrientation = 315;
+
+        return actions;
+    }
+
+    public ArrayList<String> goToDirection(String direction) {
+        ArrayList<String> actions = new ArrayList<String>();
+
+        int newOrientation;
+        switch (direction) {
+            case "E":
+                newOrientation = 0;
+                break;
+            case "NE":
+                newOrientation = 45;
+                break;
+            case "N":
+                newOrientation = 90;
+                break;
+            case "NW":
+                newOrientation = 135;
+                break;
+            case "W":
+                newOrientation = 180;
+                break;
+            case "SW":
+                newOrientation = 225;
+                break;
+            case "S":
+                newOrientation = 270;
+                break;
+            case "SE":
+                newOrientation = 315;
+                break;
+            default:
+                newOrientation = -1;
+                break;
         }
 
         while (orientation != newOrientation && newOrientation != -1) {
-            actions.add("LEFT");
-            orientation = (orientation + 45) % 360;
+            actions.add(turnLeft());
         }
 
         if (newOrientation != -1) {
@@ -581,17 +686,23 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
     }
 
     public boolean doAction(String action) {
-        session = session.createReply();
-        session.setContent("Request execute " + action + " session " + sessionKey);
-
-        this.LARVAsend(session);
-        session = this.blockingReceive();
-
-        if (session.getContent().endsWith("Success")) {
-            Info("Action " + action + " executed successfully");
+        if (action == "UNREACHABLE") {
+            System.out.println("||---- Tatooine cannot be solved. The jedi is unreachable ----||\n");
+            return true;
         }
         else {
-            return false;
+            session = session.createReply();
+            session.setContent("Request execute " + action + " session " + sessionKey);
+
+            this.LARVAsend(session);
+            session = this.blockingReceive();
+
+            if (session.getContent().endsWith("Success") || session.getContent().endsWith("Success\nCaptured Luke")) {
+                Info("Action " + action + " executed successfully");
+            }
+            else {
+                return false;
+            }
         }
 
         if (action == "RECHARGE") { fillEnergy(); }
@@ -611,7 +722,7 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
             route.add(new Position3D(currentPosition.getX(), currentPosition.getY(), currentPosition.getZ()));
         }
 
-        updatePosition3D(action);
+        updateCurrentPosition(action);
         setLastAction(action);
 
         return true;
@@ -630,7 +741,7 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
     public boolean isOnTarget() { return distance == 0 && lidar[AGENT_IN_LIDAR_X][AGENT_IN_LIDAR_Y] == 0; }
 
     private boolean isInRightOrientation() {
-        return getOrientation() - 22.5 <= angular && angular <= getOrientation() + 22.5;
+        return orientation == getAngularOrientation();
     }
 
     public boolean isFlyingAtMaximumAltitude() {
