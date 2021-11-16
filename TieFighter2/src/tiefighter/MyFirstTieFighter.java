@@ -7,7 +7,7 @@ import swing.LARVADash;
 
 import java.util.ArrayList;
 
-public class MyFirstTieFighter extends LARVAFirstAgent{
+public class MyFirstTieFighter extends LARVAFirstAgent {
 
     /**** ATTRIBUTES ****/
     String service = "PManager", problemManager = "", content, sessionKey, sessionManager, storeManager, sensorKeys;
@@ -40,7 +40,7 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
     int lidar[][], thermal[][];
     final int AGENT_IN_LIDAR_X = 5, AGENT_IN_LIDAR_Y = 5;
     final int AGENT_IN_THERMAL_X = 5, AGENT_IN_THERMAL_Y = 5;
-    //-- Calculated
+        //-- Calculated
     double energy = 3500.0;
     int orientation = 0;
     Position3D currentPosition = new Position3D(-1, -1, -1);
@@ -49,8 +49,9 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
     // Memory
     String lastAction = "";
     boolean avoidCrash = false;
-    boolean moveState = true;
+    boolean moveToVisitPosition = false;
     ArrayList<Position3D> route = new ArrayList<Position3D>();
+    ArrayList<Position3D> prohibitedRoute = new ArrayList<Position3D>();
 
     /**** METHODS ****/
     // Up, Execute, Down Agent
@@ -59,7 +60,6 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
         super.setup();
         logger.onOverwrite();
         logger.setLoggerFileName("mylog.json");
-        this.enableDeepLARVAMonitoring();
         Info("Setup and configure agent");
         mystatus = Status.CHECKIN;
         exit = false;
@@ -256,6 +256,9 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
         }
 
         if (!readSensors()) { return Status.CLOSEPROBLEM; }
+        if (!jediReachable) {
+            Info("||---- Tatooine cannot be solved. The jedi is unreachable ----||\n");
+        }
 
         return Status.CLOSEPROBLEM;
     }
@@ -301,11 +304,78 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
             return 315;
         }
     }
+    public String getDirectionFromOrientation(int orientation) {
+        String direction;
+        switch (orientation) {
+            case 0:
+                direction = "E";
+                break;
+            case 45:
+                direction = "NE";
+                break;
+            case 90:
+                direction = "N";
+                break;
+            case 135:
+                direction = "NW";
+                break;
+            case 180:
+                direction = "W";
+                break;
+            case 225:
+                direction = "SW";
+                break;
+            case 270:
+                direction = "S";
+                break;
+            case 315:
+                direction = "SE";
+                break;
+            default:
+                direction = "NONE";
+                break;
+        }
+        return direction;
+    }
+    public int getOrientationFromDirection(String direction) {
+        int newOrientation;
+        switch (direction) {
+            case "E":
+                newOrientation = 0;
+                break;
+            case "NE":
+                newOrientation = 45;
+                break;
+            case "N":
+                newOrientation = 90;
+                break;
+            case "NW":
+                newOrientation = 135;
+                break;
+            case "W":
+                newOrientation = 180;
+                break;
+            case "SW":
+                newOrientation = 225;
+                break;
+            case "S":
+                newOrientation = 270;
+                break;
+            case "SE":
+                newOrientation = 315;
+                break;
+            default:
+                newOrientation = -1;
+                break;
+        }
+        return newOrientation;
+    }
         //-- Position
     public void setCurrentPositionToSensorsValue() {
             currentPosition.setX(gps[0]);
             currentPosition.setY(gps[1]);
             currentPosition.setZ(gps[2]);
+            route.add(new Position3D(currentPosition.getX(), currentPosition.getY(), currentPosition.getZ()));
         }
     public void updateCurrentPosition(String action) {
         switch (action) {
@@ -347,6 +417,9 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
 
         getSensorsInfo();
         showSensorsInfo();
+
+        setCurrentPositionToSensorsValue();
+
         return true;
     }
         //-- Sensors information from myDashboard
@@ -391,14 +464,11 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
         Info("Current distance to target= " + getDistanceToTarget(currentPosition.getX(), currentPosition.getY()));
     }
 
-    public void changeMoveState() { moveState = !moveState; }
-
     // Single actions
     public String turnLeft() {
         setOrientation((getOrientation() + 45) % 360);
         return "LEFT";
     }
-
     public String turnRight() {
         setOrientation(Math.floorMod(getOrientation() - 45, 360));
         return "RIGHT";
@@ -454,44 +524,6 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
             actions.addAll(goToBestPosition());
             return actions;
         }
-        /*else if (!isNecessaryToAvoidCrash()) { // Si no hay que esquivar
-            if (isInRightOrientation()) { // Si está en la dirección del objetivo | Intenta avanzar
-                if(isMovePossible(getOrientation())) { actions.add("MOVE"); }
-                else { avoidCrash = true; } // Si hay un obstáculo delante
-            }
-            else { // Si no está en la dirección del objetivo | Gira
-                double angularDistance1 = angular - getOrientation();
-                double angularDistance2 = 360 - angularDistance1;
-                if (angularDistance1 >= 0) {
-                    if (angularDistance1 <= angularDistance2) { actions.add(turnLeft()); }
-                    else { actions.add(turnRight()); }
-                }
-                else {
-                    if (Math.abs(angularDistance1) <= angularDistance2) { actions.add(turnRight()); }
-                    else { actions.add(turnLeft()); }
-                }
-            }
-            return actions;
-        }
-        else { // Si hay que esquivar
-            if (isMovePossible(getAngularOrientation())) { // Si es posible moverme hacia donde está el objetivo termino de esquivar
-                avoidCrash = false;
-                while(getOrientation() != getAngularOrientation()) {
-                    if (moveState) actions.add(turnRight());
-                    else actions.add(turnLeft());
-                }
-                return actions;
-            }
-            else if (isMovePossible(getOrientation())) {
-                actions.add("MOVE");
-                return actions;
-            }
-            else {
-                if (moveState) actions.add(turnLeft());
-                else actions.add(turnRight());
-                return actions;
-            }
-        }*/
     }
 
     public ArrayList<String> goToBestPosition() {
@@ -501,64 +533,7 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
         double shortestDistance = -1.0;
         boolean first = true;
 
-        /*
-        Analiza solo las tres casillas delanteras
-        int index[] = {};
-        switch (orientation) {
-            case 0:
-                index = new int[]{-1, 1, 0, 1, 1, 1};
-                break;
-            case 45:
-                index = new int[]{-1, 0, -1, 1, 0, 1};
-                break;
-            case 90:
-                index = new int[]{-1, -1, -1, 0, -1, 1};
-                break;
-            case 135:
-                index = new int[]{0, -1, -1, -1, -1, 0};
-                break;
-            case 180:
-                index = new int[]{1, -1, 0, -1, -1, -1};
-                break;
-            case 225:
-                index = new int[]{1, 0, 1, -1, 0, -1};
-                break;
-            case 270:
-                index = new int[]{1, 1, 1, 0, 1, -1};
-                break;
-            case 315:
-                index = new int[]{0, 1, 1, 1, 1, 0};
-                break;
-        }
-        for (int i = 0; i < 6 && minimumThermal != 0; i += 2) {
-            int x = index[i], y = index[i+1];
-            if (lidar[AGENT_IN_LIDAR_X + x][AGENT_IN_LIDAR_Y + y] >= 0 && !(x == 0 && y == 0)) {
-                double distanceFromPosition = getDistanceToTarget(currentPosition.getX() + y, currentPosition.getY() + x);
-                int thermalValue = thermal[AGENT_IN_THERMAL_X + x][AGENT_IN_THERMAL_Y + y];
-                if (!nextPositionHasBeenVisited(x, y, 0)) {
-                    if (first) {
-                        minimumThermal = thermalValue;
-                        shortestDistance = distanceFromPosition;
-                        Ax = x; Ay = y;
-                        first = false;
-                    }
-                    else if (minimumThermal > thermalValue && distance < 5.0) {
-                        minimumThermal = thermalValue;
-                        Ax = x; Ay = y;
-                    }
-                    else if (shortestDistance > distanceFromPosition) {
-                        shortestDistance = distanceFromPosition;
-                        Ax = x; Ay = y;
-                    }
-                }
-            }
-        }
-
-        if (minimumThermal == -1 && shortestDistance == -1.0) {
-            actions.add(turnRight());
-        }*/
-
-        // Comprueba si el objetivo es alcanzable
+        // Check if jedi is reachable
         for (int i = 0; i < thermal.length; i++) {
             for (int j = 0; j < thermal[0].length; j++)
                 if (thermal[i][j] == 0 && lidar[i][j] < 0 ) {
@@ -568,37 +543,8 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
         }
 
         if (isMovePossible(getOrientation()) && isInRightOrientation()) {
-            String movement;
-            switch (getOrientation()) {
-                case 0:
-                    movement = "E";
-                    break;
-                case 45:
-                    movement = "NE";
-                    break;
-                case 90:
-                    movement = "N";
-                    break;
-                case 135:
-                    movement = "NW";
-                    break;
-                case 180:
-                    movement = "W";
-                    break;
-                case 225:
-                    movement = "SW";
-                    break;
-                case 270:
-                    movement = "S";
-                    break;
-                case 315:
-                    movement = "SE";
-                    break;
-                default:
-                    movement = "NONE";
-                    break;
-            }
-            actions.addAll(goToDirection(movement));
+            String direction = getDirectionFromOrientation(getOrientation());
+            actions.addAll(goToDirection(direction));
         }
         else {
             for (int x = -1; x <= 1 && minimumThermal != 0; x++) {
@@ -607,7 +553,7 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
                         if (!(x == 0 && y == 0)) {
                             double distanceFromPosition = getDistanceToTarget(currentPosition.getX() + y, currentPosition.getY() + x);
                             int thermalValue = thermal[AGENT_IN_THERMAL_X + x][AGENT_IN_THERMAL_Y + y];
-                            if (!nextPositionHasBeenVisited(x, y, 100)) {
+                            if (!nextPositionHasBeenVisited(x, y, 1000) || moveToVisitPosition) {
                                 if (first) {
                                     minimumThermal = thermalValue;
                                     shortestDistance = distanceFromPosition;
@@ -638,11 +584,58 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
             else if (Ax == -1 && Ay == 0) { actions.addAll(goToDirection("N")); }
             else if (Ax == -1 && Ay == 1) { actions.addAll(goToDirection("NE")); }
             else if (Ax == 0 && Ay == -1) { actions.addAll(goToDirection("W")); }
-            else if (Ax == 0 && Ay == 0) { actions.addAll(goToDirection("NONE")); }
             else if (Ax == 0 && Ay == 1) { actions.addAll(goToDirection("E")); }
             else if (Ax == 1 && Ay == -1) { actions.addAll(goToDirection("SW")); }
             else if (Ax == 1 && Ay == 0) { actions.addAll(goToDirection("S")); }
             else if (Ax == 1 && Ay == 1) { actions.addAll(goToDirection("SE")); }
+            else if (Ax == 0 && Ay == 0) { actions.addAll(goToDirection("NONE"));
+                /*final int BACK_STEPS = 3;
+                actions = goToBackPosition(BACK_STEPS);
+                for(int i = 0; i < BACK_STEPS; i++) {
+                    prohibitedRoute.add(route.remove(route.size()-1-i));
+                }*/
+            }
+        }
+
+        return actions;
+    }
+
+    public ArrayList<String> goToBackPosition(int steps) {
+        ArrayList<String> actions = new ArrayList<String>();
+
+        for (int i = 0; i < steps; i++) {
+            Position3D actualPosition = route.get(route.size()-1-i);
+            double actualPositionX = actualPosition.getX();
+            double actualPositionY = actualPosition.getY();
+            Position3D nextPosition = route.get(route.size()-2-i);
+            double nextPositionX = nextPosition.getX();
+            double nextPositionY = nextPosition.getY();
+            String directionOfNextPosition = "NONE";
+            if (nextPositionY == actualPositionY - 1 && nextPositionX == actualPositionX - 1) {
+                directionOfNextPosition = "NW";
+            }
+            else if (nextPositionY == actualPositionY - 1 && nextPositionX == actualPositionX) {
+                directionOfNextPosition = "N";
+            }
+            else if (nextPositionY == actualPositionY - 1 && nextPositionX == actualPositionX + 1) {
+                directionOfNextPosition = "NE";
+            }
+            else if (nextPositionY == actualPositionY && nextPositionX == actualPositionX - 1) {
+                directionOfNextPosition = "W";
+            }
+            else if (nextPositionY == actualPositionY && nextPositionX == actualPositionX + 1) {
+                directionOfNextPosition = "E";
+            }
+            else if (nextPositionY == actualPositionY + 1 && nextPositionX == actualPositionX - 1) {
+                directionOfNextPosition = "SW";
+            }
+            else if (nextPositionY == actualPositionY + 1 && nextPositionX == actualPositionX) {
+                directionOfNextPosition = "S";
+            }
+            else if (nextPositionY == actualPositionY + 1 && nextPositionX == actualPositionX + 1) {
+                directionOfNextPosition = "SE";
+            }
+            actions.addAll(goToDirection(directionOfNextPosition));
         }
 
         return actions;
@@ -651,40 +644,10 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
     public ArrayList<String> goToDirection(String direction) {
         ArrayList<String> actions = new ArrayList<String>();
 
-        int newOrientation;
-        switch (direction) {
-            case "E":
-                newOrientation = 0;
-                break;
-            case "NE":
-                newOrientation = 45;
-                break;
-            case "N":
-                newOrientation = 90;
-                break;
-            case "NW":
-                newOrientation = 135;
-                break;
-            case "W":
-                newOrientation = 180;
-                break;
-            case "SW":
-                newOrientation = 225;
-                break;
-            case "S":
-                newOrientation = 270;
-                break;
-            case "SE":
-                newOrientation = 315;
-                break;
-            default:
-                newOrientation = -1;
-                break;
-        }
+        int newOrientation = getOrientationFromDirection(direction);
 
-        while (orientation != newOrientation && newOrientation != -1) {
+        while (this.orientation != newOrientation && newOrientation != -1)
             actions.add(turnLeft());
-        }
 
         if (newOrientation != -1) {
             actions.add("MOVE");
@@ -695,7 +658,6 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
 
     public boolean doAction(String action) {
         if (action == "UNREACHABLE") {
-            System.out.println("||---- Tatooine cannot be solved. The jedi is unreachable ----||\n");
             return true;
         }
         else {
@@ -718,30 +680,18 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
 
         showAgentInfo();
 
-        if (action == "MOVE") {
-            boolean in = true;
-            for (Position3D position : route) {
-                if (position.isEqualTo2D(currentPosition.getX(), currentPosition.getY()) && in) {
-                    if (isCloseToBoundaries())
-                        changeMoveState();
-                    in = false;
-                };
-            }
-            route.add(new Position3D(currentPosition.getX(), currentPosition.getY(), currentPosition.getZ()));
-        }
-
         updateCurrentPosition(action);
+
         setLastAction(action);
 
         return true;
     }
 
-    //
+    // Utilities
     public double getDistanceToTarget(double fromPositionX, double fromPositionY) {
         return Math.sqrt(Math.pow(fromPositionX - targetPosition.getX(), 2) + Math.pow(fromPositionY - targetPosition.getY(), 2));
     }
 
-    // Condition checks
     public boolean isOnTheGround() { return lidar[AGENT_IN_LIDAR_X][AGENT_IN_LIDAR_Y] == 0; }
 
     public boolean isAboveTarget() { return distance == 0 && lidar[AGENT_IN_LIDAR_X][AGENT_IN_LIDAR_Y] > 0; }
@@ -756,7 +706,7 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
         return getAltitude() == getWorldMaxFlightAltitude();
     }
     
-    public boolean isLastAction(String action) { return lastAction == action;   }
+    public boolean isLastAction(String action) { return getLastAction() == action;   }
 
     public boolean isNecessaryToRecharge() { return getEnergy() <= (getWorldMaxFlight() / 5) * 2; }
 
@@ -848,7 +798,6 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
         return new Position3D(x, y, z);
     }
 
-    //Alberto
     public boolean nextPositionHasBeenVisited(int x, int y, int scope) {
         if (route.size() < scope)
             scope = route.size();
@@ -856,6 +805,9 @@ public class MyFirstTieFighter extends LARVAFirstAgent{
         boolean visited = false;
         for (int i = route.size() - 1; i >= route.size() - scope && !visited; i--)
             visited = route.get(i).isEqualTo2D(currentPosition.getX() + y, currentPosition.getY() + x);
+
+        for (int i = 0; i < prohibitedRoute.size()-1 && !visited; i++)
+            visited = prohibitedRoute.get(i).isEqualTo2D(currentPosition.getX() + y, currentPosition.getY() + x);
 
         return visited;
     }
